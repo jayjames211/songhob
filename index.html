@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Songo VERSION 1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-theme="wood">
+
+  <!-- Ecran menu principal -->
+  <div class="screen active" id="screenMenu">
+    <div class="menu-container">
+      <div class="menu-logo">
+        <h1>SONGO</h1>
+        <p>Jeu de semaillES VERSION 1</p>
+      </div>
+      <div class="menu-options">
+        <h2>Mode de jeu</h2>
+        <div class="mode-cards">
+          <div class="mode-card selected" data-mode="pvp" id="modePvP">
+            <span class="mode-label">Deux joueurs</span>
+            <span class="mode-desc">Local - meme ecran</span>
+          </div>
+          <div class="mode-card" data-mode="pva" id="modePvA">
+            <span class="mode-label">Contre IA</span>
+            <span class="mode-desc">Solo - intelligence artificielle</span>
+          </div>
+        </div>
+
+        <div class="ia-options hidden" id="iaOptions">
+          <h3>Niveau de difficulte</h3>
+          <div class="level-btns">
+            <button class="level-btn selected" data-level="easy">Facile</button>
+            <button class="level-btn" data-level="medium">Moyen</button>
+            <button class="level-btn" data-level="hard">Difficile</button>
+          </div>
+        </div>
+
+        <div class="player-names">
+          <div class="name-input-group">
+            <label>Joueur SUD (bas)</label>
+            <input type="text" id="nameSud" placeholder="Votre nom" maxlength="15" value="Joueur" />
+          </div>
+          <div class="name-input-group" id="nameNordGroup">
+            <label>Joueur NORD (haut)</label>
+            <input type="text" id="nameNord" placeholder="Nom adversaire" maxlength="15" value="Adversaire" />
+          </div>
+        </div>
+
+        <button class="btn-primary" id="btnStartGame">Commencer la partie</button>
+        <button class="btn-secondary" id="btnMenuScores">Historique des scores</button>
+        <button class="btn-secondary" id="btnMenuHelp">Regles du jeu</button>
+        <button class="btn-theme-menu" id="themeToggleMenu">Changer de theme</button>
+      </div>
+      <div class="license-footer">
+        <p>ASSOUMOU YENE LAURENT KEVIN</p>
+        <p>Matricule: 24G2332 | Universite de Yaounde 1</p>
+        <p>Annee academique 2024-2025</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ecran de jeu -->
+  <div class="screen" id="screenGame">
+    <div class="game-topbar">
+      <button class="btn-icon" id="btnBackMenu">Retour menu</button>
+      <div class="chrono-display">Temps: <span id="chronoDisplay">00:00</span></div>
+      <button class="btn-icon" id="btnGameHelp">Aide</button>
+    </div>
+
+    <div class="scores">
+      <div class="score-card nord" id="scoreCardNord">
+        <span class="player-name-display" id="displayNameNord">NORD</span>
+        <span class="player-score" id="grainNord">0</span>
+        <span class="grain-label">graines</span>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="score-card sud" id="scoreCardSud">
+        <span class="player-name-display" id="displayNameSud">SUD</span>
+        <span class="player-score" id="grainSud">0</span>
+        <span class="grain-label">graines</span>
+      </div>
+    </div>
+
+    <div class="tour-message" id="tourMessage">
+      Tour de: <strong id="tourNom">SUD</strong>
+    </div>
+
+    <main class="plateau">
+      <div class="rangee rangee-nord" id="rangeeNord"></div>
+      <div class="separateur"></div>
+      <div class="rangee rangee-sud" id="rangeeSud"></div>
+    </main>
+
+    <div class="legende">
+      <span class="leg-item"><span class="dot dot-selectable"></span> Case jouable</span>
+      <span class="leg-item"><span class="dot dot-capture"></span> Capture possible</span>
+    </div>
+
+    <div class="game-actions">
+      <button class="btn-secondary" id="btnRestart">Nouvelle partie</button>
+      <button class="btn-secondary" id="btnThemeGame">Theme</button>
+    </div>
+
+    <div class="game-control-buttons">
+      <button class="btn-pause" id="btnPauseGame">Pause</button>
+      <button class="btn-abandon" id="btnAbandonGame">Abandonner</button>
+    </div>
+
+    <div class="capture-history" id="captureHistory">
+      <div class="history-header">
+        <span>Historique des captures</span>
+        <button class="history-clear" id="btnClearHistory">Effacer</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <div class="history-empty">Aucune capture pour l instant</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ecran historique des scores -->
+  <div class="screen" id="screenScores">
+    <div class="screen-inner">
+      <button class="btn-back" id="btnBackFromScores">Retour</button>
+      <h2>Historique des parties</h2>
+      <div class="scores-stats" id="scoresStats"></div>
+      <div class="adversary-stats" id="adversaryStats">
+        <h3>Statistiques par adversaire</h3>
+        <div class="adversary-list" id="adversaryList"></div>
+      </div>
+      <div class="scores-list" id="scoresList"></div>
+      <div class="scores-actions">
+        <button class="btn-primary" id="btnExportJSON">Exporter JSON</button>
+        <button class="btn-danger" id="btnClearScores">Effacer historique</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fenetre modale aide -->
+  <div class="modal" id="modalAide">
+    <div class="modal-content">
+      <button class="modal-close" id="closeAide">Fermer</button>
+      <div class="aide-tabs">
+        <button class="aide-tab active" data-tab="regles">Regles</button>
+        <button class="aide-tab" data-tab="tuto">Tutoriel</button>
+        <button class="aide-tab" data-tab="astuces">Astuces</button>
+      </div>
+      <div class="aide-content" id="aideContent"></div>
+    </div>
+  </div>
+
+  <!-- Fenetre modale fin de partie -->
+  <div class="modal" id="modalFin">
+    <div class="modal-content fin-modal">
+      <h2 id="finTitre">Partie terminee</h2>
+      <p id="finMessage"></p>
+      <div class="fin-stats" id="finStats"></div>
+      <button class="btn-primary" id="btnFinRestart">Rejouer</button>
+      <button class="btn-secondary" id="btnFinMenu">Menu principal</button>
+    </div>
+  </div>
+
+  <!-- Notification toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="storage.js"></script>
+  <script src="ai.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
