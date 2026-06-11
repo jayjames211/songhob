@@ -192,13 +192,7 @@ function renderHistory() {
     var html = "";
     for(var i = 0; i < captureHistory.length; i++) {
         var entry = captureHistory[i];
-        html += `
-            <div class="history-entry">
-                <span class="player">${entry.player}</span>
-                <span>capture ${entry.seeds} graine(s) depuis case(s) ${entry.pits}</span>
-                <span class="time">${entry.time}</span>
-            </div>
-        `;
+        html += '<div class="history-entry"><span class="player">' + entry.player + '</span><span>capture ' + entry.seeds + ' graine(s) depuis case(s) ' + entry.pits + '</span><span class="time">' + entry.time + '</span></div>';
     }
     historyList.innerHTML = html;
 }
@@ -297,6 +291,8 @@ function initGame() {
     animationLock = false;
     isPaused = false;
     currentDuration = 0;
+    captureHistory = [];
+    renderHistory();
     
     var pauseBtn = document.getElementById("btnPauseGame");
     if(pauseBtn) {
@@ -568,7 +564,6 @@ var totalCaptured = 0;
         
         var capturedElement = document.querySelector('.case[data-index="' + cp + '"]');
         if(capturedElement) {
-            var originalBg = capturedElement.style.background;
             capturedElement.style.transition = "background 0.2s";
             capturedElement.style.background = "var(--capture-color)";
             setTimeout(function(el) {
@@ -592,7 +587,7 @@ var totalCaptured = 0;
         gameActive = false;
         gameOver = true;
         animationLock = false;
-        endGame("nul", "Partie annulee - Camp adverse vide");
+        endGame("nul", "Partie annulee - Camp adverse vide", scores[0], scores[1]);
         return;
     }
     
@@ -742,14 +737,14 @@ function checkGameEnd() {
         gameActive = false;
         gameOver = true;
         stopTimer();
-        endGame("NORD", nordName + " atteint " + WIN_SCORE + " graines !");
+        endGame("NORD", nordName + " atteint " + WIN_SCORE + " graines !", scores[0], scores[1]);
         return;
     }
     if(scores[1] >= WIN_SCORE) {
         gameActive = false;
         gameOver = true;
         stopTimer();
-        endGame("SUD", sudName + " atteint " + WIN_SCORE + " graines !");
+        endGame("SUD", sudName + " atteint " + WIN_SCORE + " graines !", scores[0], scores[1]);
         return;
     }
     
@@ -770,9 +765,9 @@ function checkGameEnd() {
         gameOver = true;
         stopTimer();
         
-        if(scores[0] > scores[1]) endGame("NORD", "Moins de 10 graines restantes");
-        else if(scores[1] > scores[0]) endGame("SUD", "Moins de 10 graines restantes");
-        else endGame("nul", "Partie nulle - moins de 10 graines");
+        if(scores[0] > scores[1]) endGame("NORD", "Moins de 10 graines restantes", scores[0], scores[1]);
+        else if(scores[1] > scores[0]) endGame("SUD", "Moins de 10 graines restantes", scores[0], scores[1]);
+        else endGame("nul", "Partie nulle - moins de 10 graines", scores[0], scores[1]);
         return;
     }
     
@@ -787,17 +782,23 @@ function checkGameEnd() {
             gameOver = true;
             stopTimer();
             var winner = currentPlayer === 0 ? "SUD" : "NORD";
-            endGame(winner, (winner === "NORD" ? nordName : sudName) + " gagne par solidarite");
+            var winnerName = winner === "NORD" ? nordName : sudName;
+            endGame(winner, winnerName + " gagne par solidarite", scores[0], scores[1]);
         }
     }
 }
 
-function endGame(winner, message) {
+function endGame(winner, message, scoreNord, scoreSud) {
     if(!gameActive && gameOver) return;
     
     gameActive = false;
     gameOver = true;
     stopTimer();
+    
+    var winnerName = "";
+    if(winner === "NORD") winnerName = nordName;
+    else if(winner === "SUD") winnerName = sudName;
+    else winnerName = "Match nul";
     
     if(typeof saveScore !== "undefined") {
         try {
